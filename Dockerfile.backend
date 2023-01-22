@@ -1,0 +1,15 @@
+FROM golang:1.17.1-alpine AS base
+WORKDIR /app/backend
+COPY ./backend ./
+
+FROM base AS builder
+RUN go build -o main /app/backend/main.go
+
+FROM alpine:3.14
+EXPOSE 8000
+WORKDIR /app/backend
+COPY --from=builder /app/backend/main /app/backend
+COPY --from=builder /usr/local/go/lib/time/zoneinfo.zip /zoneinfo.zip
+ENV ZONEINFO=/zoneinfo.zip
+RUN mkdir /app/backend/logs /run/secrets
+ENTRYPOINT ["/app/backend/main"]

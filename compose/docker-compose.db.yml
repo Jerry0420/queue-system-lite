@@ -1,0 +1,26 @@
+version: "3.7"
+
+services:     
+  db:
+    image: postgres:14.0-alpine
+    container_name: db
+    # restart: always
+    ports:
+      - "5432:5432"
+    networks:
+      - queue_system
+    env_file: 
+      - ../envs/.env.db
+    environment:
+      - POSTGRES_INITDB_ARGS=--data-checksums
+    working_dir: /migration_tools
+    volumes:
+      - ../scripts/migration_tools:/migration_tools
+      - db_data:/var/lib/postgresql/data
+        
+volumes: 
+  db_data: {}
+
+networks: 
+  queue_system:
+    external: true

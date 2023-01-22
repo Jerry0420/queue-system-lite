@@ -1,0 +1,52 @@
+version: "3.7"
+
+services: 
+  frontend:
+    build:
+      context: ../
+      dockerfile: Dockerfile.frontend
+    restart: always
+    container_name: frontend
+    networks:
+      - queue_system
+    volumes:
+      - frontend_log_dir:/var/log/nginx:rw
+      - ../envs/.env.frontend:/etc/config/.env.frontend:ro
+
+  backend:
+    build:
+      context: ../
+      dockerfile: Dockerfile.backend
+    restart: always
+    container_name: backend
+    networks:
+      - queue_system
+    volumes:
+      - backend_log_dir:/app/backend/logs:rw
+      - ../envs/.env:/etc/config/.env:ro
+  
+  nginx:
+    image: nginx:1.18-alpine
+    ports:
+    - '80:80'
+    - '443:443'
+    env_file: 
+      - ../envs/.env.nginx
+    container_name: nginx
+    restart: always
+    command: >
+      sh -c "/nginx.conf.sh && nginx -g 'daemon off;' -c /nginx.conf"
+    volumes:
+        - ../scripts/nginx/nginx.conf.sh:/nginx.conf.sh
+        - ../cert/certbot/conf/live/queue-system.vip/fullchain.pem:/run/secrets/nginx.crt
+        - ../cert/certbot/conf/live/queue-system.vip/privkey.pem:/run/secrets/nginx.key
+    networks:
+      - queue_system
+
+volumes: 
+  backend_log_dir: {}
+  frontend_log_dir: {}
+
+networks: 
+  queue_system:
+    external: true

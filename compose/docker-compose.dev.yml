@@ -1,0 +1,55 @@
+version: "3.7"
+
+services: 
+  frontend:
+    build:
+      context: ../
+      dockerfile: Dockerfile.frontend
+      target: base
+    container_name: frontend
+    networks:
+      - queue_system
+    stdin_open: true
+    tty: true
+    ports:
+      - "3000:3000"
+    volumes:
+      - ../:/app
+      - ../envs/.env.frontend:/etc/config/.env.frontend
+
+  backend:
+    build:
+      context: ../
+      dockerfile: Dockerfile.backend
+      target: base
+    container_name: backend
+    networks:
+      - queue_system
+    stdin_open: true
+    tty: true
+    ports:
+      - "8000:8000"
+      - "3001:3001"
+    volumes:
+      - ../:/app
+      - ../envs/.env:/etc/config/.env
+      - ../backend/logs/:/app/backend/logs/
+
+  nginx:
+    image: nginx:1.18-alpine
+    ports:
+    - '80:80'
+    env_file: 
+      - ../envs/.env.nginx
+    container_name: nginx
+    command: >
+      sh -c "/nginx.conf.dev.sh
+      && nginx -g 'daemon off;' -c /nginx.conf"
+    volumes:
+        - ../scripts/nginx/nginx.conf.dev.sh:/nginx.conf.dev.sh
+    networks:
+      - queue_system
+
+networks: 
+  queue_system:
+    external: true

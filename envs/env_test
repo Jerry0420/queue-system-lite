@@ -1,0 +1,12 @@
+{
+    "ENV": "test",
+    "CONTEXT_TIMEOUT": "2",
+    "POSTGRES_SSL": "disable",
+    "POSTGRES_USER": "root",
+    "POSTGRES_PASSWORD": "root",
+    "DOMAIN": "https://queue-system.vip",
+    "TOKEN_SIGN_KEY": "im_token_sign_key",
+    "POSTGRES_HOST": "db_test",
+    "POSTGRES_PORT": "5432",
+    "POSTGRES_DB": "queue_system"
+}
