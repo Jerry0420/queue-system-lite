@@ -210,26 +210,28 @@ func (iu *integrationUsecase) CloseStore(ctx context.Context, store domain.Store
 	go func() {
 		defer wg.Done()
 		date, csvFileName, csvContent := iu.storeUsecase.GenerateCsvFileNameAndContent(store.CreatedAt, store.Timezone, store.Name, customers)
-		filePath, err := utils.GenerateCSV(
-			ctx,
-			iu.config.ContextTimeOut*4,
-			csvFileName,
-			csvContent,
-		)
-		if err != nil {
-			return
-		}
 		emailSubject, emailContent := iu.storeUsecase.GenerateEmailContentOfCloseStore(store.Name, date)
-		_, err = utils.SendEmail(
-			ctx,
-			iu.config.ContextTimeOut*4,
-			iu.dialer,
-			iu.config.FromEmail,
-			emailSubject,
-			emailContent,
-			store.Email,
-			filePath,
-		)
+		if iu.dialer != nil {
+			filePath, err := utils.GenerateCSV(
+				ctx,
+				iu.config.ContextTimeOut*4,
+				csvFileName,
+				csvContent,
+			)
+			if err != nil {
+				return
+			}
+			_, _ = utils.SendEmail(
+				ctx,
+				iu.config.ContextTimeOut*4,
+				iu.dialer,
+				iu.config.FromEmail,
+				emailSubject,
+				emailContent,
+				store.Email,
+				filePath,
+			)
+		}
 	}()
 
 	wg.Add(1)
@@ -280,6 +282,7 @@ func (iu *integrationUsecase) CloseStoreRoutine(ctx context.Context) error {
 	var wg sync.WaitGroup
 	errChan := make(chan error)
 
+	// 切成兩份一起執行
 	chunckedStores := iu.storeUsecase.ChunkStoresSlice(stores, 2)
 
 	for _, stores := range chunckedStores {
@@ -295,26 +298,29 @@ func (iu *integrationUsecase) CloseStoreRoutine(ctx context.Context) error {
 				// timestamp to time
 				storeCreatedAt := time.Unix(storeCreatedAtInInt64, 0)
 				date, csvFileName, csvContent := iu.storeUsecase.GenerateCsvFileNameAndContent(storeCreatedAt, timezone, storeName, store)
-				filePath, err := utils.GenerateCSV(
-					ctx,
-					iu.config.ContextTimeOut*4,
-					csvFileName,
-					csvContent,
-				)
-				if err != nil {
-					return
-				}
 				emailSubject, emailContent := iu.storeUsecase.GenerateEmailContentOfCloseStore(storeName, date)
-				_, _ = utils.SendEmail(
-					ctx,
-					iu.config.ContextTimeOut*4,
-					iu.dialer,
-					iu.config.FromEmail,
-					emailSubject,
-					emailContent,
-					storeEmail,
-					filePath,
-				)
+
+				if iu.dialer != nil {
+					filePath, err := utils.GenerateCSV(
+						ctx,
+						iu.config.ContextTimeOut*4,
+						csvFileName,
+						csvContent,
+					)
+					if err != nil {
+						return
+					}
+					_, _ = utils.SendEmail(
+						ctx,
+						iu.config.ContextTimeOut*4,
+						iu.dialer,
+						iu.config.FromEmail,
+						emailSubject,
+						emailContent,
+						storeEmail,
+						filePath,
+					)
+				}
 			}
 		}(stores)
 	}
@@ -364,17 +370,18 @@ func (iu *integrationUsecase) ForgetPassword(ctx context.Context, email string) 
 	}
 
 	emailSubject, emailContent := iu.storeUsecase.GenerateEmailContentOfForgetPassword(passwordToken, store)
-	_, err = utils.SendEmail(
-		ctx,
-		iu.config.ContextTimeOut*4,
-		iu.dialer,
-		iu.config.FromEmail,
-		emailSubject,
-		emailContent,
-		email,
-		"",
-	)
-
+	if iu.dialer != nil {
+		_, err = utils.SendEmail(
+			ctx,
+			iu.config.ContextTimeOut*4,
+			iu.dialer,
+			iu.config.FromEmail,
+			emailSubject,
+			emailContent,
+			email,
+			"",
+		)
+	}
 	return store, err
 }
 
