@@ -1,0 +1,38 @@
+name: Run Tests
+
+on:
+  - pull_request
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    container: golang:1.17.1-alpine
+    services:
+      db_test:
+        image: postgres:14.0-alpine
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: queue_system
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+    
+    - name: Install dependencies
+      run: |
+        apk add make
+        ./scripts/migration_tools/install-migrate.sh
+    - name: Test
+      env:
+        ENV_PATH: /__w/queue-system-lite/queue-system-lite/envs/env_test
+      run: |
+        cd backend/
+        make test_only path=./

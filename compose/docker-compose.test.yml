@@ -12,11 +12,10 @@ services:
   backend_test:
     image: golang:1.17.1-alpine
     container_name: backend_test
-    working_dir: /__w/queue-system/queue-system/backend
+    working_dir: /__w/queue-system-lite/queue-system-lite/backend
     stdin_open: true
     tty: true
     environment:
-      SECRET_PATH: /__w/queue-system/queue-system/envs/secret_test
-      ENV_PATH: /__w/queue-system/queue-system/envs/env_test
+      ENV_PATH: /__w/queue-system-lite/queue-system-lite/envs/env_test
     volumes:
-      - ../:/__w/queue-system/queue-system
+      - ../:/__w/queue-system-lite/queue-system-lite

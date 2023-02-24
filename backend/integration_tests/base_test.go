@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"testing"
+	"time"
 
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/suite"
@@ -63,12 +65,22 @@ func TestBackendTestSuite(t *testing.T) {
 }
 
 func (suite *BackendTestSuite) SetupSuite() {
-	allDoneChan := make(chan bool)
 	go func() {
-		backendCMD := exec.Command("sh", "-c", "go run /__w/queue-system/queue-system/backend/main.go")
+		backendCMD := exec.Command("sh", "-c", "go run /__w/queue-system-lite/queue-system-lite/backend/main.go")
 		_, err := backendCMD.Output()
 		if err != nil {
 			fmt.Println(err)
+		}
+	}()
+
+	allDoneChan := make(chan bool)
+	go func() {
+		httpClient := http.Client{Timeout: 3 * time.Second}
+		for {
+			response, _ := httpClient.Get("http://127.0.0.1:8000/api/v1")
+			if response != nil && response.StatusCode == 405 {
+				break
+			}
 		}
 		allDoneChan <- true
 	}()
@@ -92,7 +104,7 @@ func (suite *BackendTestSuite) TearDownSuite() {
 }
 
 func (suite *BackendTestSuite) SetupTest() {
-	cmd := "/__w/queue-system/queue-system/scripts/migration_tools/migration.sh up"
+	cmd := "/__w/queue-system-lite/queue-system-lite/scripts/migration_tools/migration.sh up"
 	dbDown := exec.Command("sh", "-c", cmd)
 	_, err := dbDown.Output()
 	if err != nil {
@@ -101,7 +113,7 @@ func (suite *BackendTestSuite) SetupTest() {
 }
 
 func (suite *BackendTestSuite) TearDownTest() {
-	cmd := "echo y | /__w/queue-system/queue-system/scripts/migration_tools/migration.sh down"
+	cmd := "echo y | /__w/queue-system-lite/queue-system-lite/scripts/migration_tools/migration.sh down"
 	dbDown := exec.Command("sh", "-c", cmd)
 	_, err := dbDown.Output()
 	if err != nil {

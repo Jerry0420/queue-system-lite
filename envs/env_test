@@ -8,5 +8,10 @@
     "TOKEN_SIGN_KEY": "im_token_sign_key",
     "POSTGRES_HOST": "db_test",
     "POSTGRES_PORT": "5432",
-    "POSTGRES_DB": "queue_system"
+    "POSTGRES_DB": "queue_system",
+    "EMAIL_FROM": "",
+    "EMAIL_SERVER": "",
+    "EMAIL_PORT": "",
+    "EMAIL_USERNAME": "",
+    "EMAIL_PASSWORD": ""
 }
