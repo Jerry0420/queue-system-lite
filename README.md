@@ -22,36 +22,36 @@ Every account will persist for 24 hrs. After 24 hrs, Queue System will suspend t
 
 # Screenshots
 
-![](https://raw.githubusercontent.com/Jerry0420/queue-system/main/images/open-store.png)
+![](https://raw.githubusercontent.com/Jerry0420/queue-system-lite/main/images/open-store.png)
 * Open Store (signup an account). 
 * Every account will persist for 24 hrs. After 24 hrs, Queue System will suspend the account (a.k.a. close store). Next time, the store owner can signup an account again (a.k.a. open store) to use Queue System.
 <br /><br />
 
-![](https://raw.githubusercontent.com/Jerry0420/queue-system/main/images/signin-store.png)
+![](https://raw.githubusercontent.com/Jerry0420/queue-system-lite/main/images/signin-store.png)
 * Sign in to the account
 <br /><br />
 
-![](https://raw.githubusercontent.com/Jerry0420/queue-system/main/images/close-store.png)
+![](https://raw.githubusercontent.com/Jerry0420/queue-system-lite/main/images/close-store.png)
 * The store can be actively closed by the store owner or passively closed by Queue System. 24 hrs after opening, Queue System will suspend the account (a.k.a. close store). 
 <br /><br />
 
-![](https://raw.githubusercontent.com/Jerry0420/queue-system/main/images/csv-content.png)
+![](https://raw.githubusercontent.com/Jerry0420/queue-system-lite/main/images/csv-content.png)
 * Once the store is closed, Queue System will send a CSV report to the store owner. This CSV file contains all customers' detailed information to let the store owner implement further business analysis.   
 <br /><br />
 
-![](https://raw.githubusercontent.com/Jerry0420/queue-system/main/images/store-summary.png)
+![](https://raw.githubusercontent.com/Jerry0420/queue-system-lite/main/images/store-summary.png)
 * The store owner can see the summary of all queues and the QRcode block after signing into their account.
 <br /><br />
 
-![](https://raw.githubusercontent.com/Jerry0420/queue-system/main/images/customer-scan.png)
+![](https://raw.githubusercontent.com/Jerry0420/queue-system-lite/main/images/customer-scan.png)
 * Once a customer scans a QRcode, the QRcode will change automatically.    
 <br /><br />
 
-![](https://raw.githubusercontent.com/Jerry0420/queue-system/main/images/update-customer.png)
+![](https://raw.githubusercontent.com/Jerry0420/queue-system-lite/main/images/update-customer.png)
 * The store owner can change every single customer's status at any time.
 <br /><br />
 
-![](https://raw.githubusercontent.com/Jerry0420/queue-system/main/images/update-customer-refresh.png)
+![](https://raw.githubusercontent.com/Jerry0420/queue-system-lite/main/images/update-customer-refresh.png)
 * When a new customer joins the line or the state of a customer is updated, the website will refresh immediately and automatically.   
 
 # Architecture
